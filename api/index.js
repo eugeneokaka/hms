@@ -39,6 +39,40 @@ app.use("/login", loginRouter);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
+// Middleware to verify JWT
+const authenticate = (req, res, next) => {
+  const token = req.cookies.token;
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  jwt.verify(token, JWT_SECRET, async (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+    req.user = decoded;
+    next();
+  });
+};
+
+// GET /auth/me - Fetch logged-in user role
+app.get("/me", authenticate, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { role: true }, // Only fetch the role
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({ role: user.role });
+  } catch (error) {
+    console.error("Error fetching user role:", error);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+});
 app.get("/auth/status", async (req, res) => {
   try {
     const token = req.cookies.token;
