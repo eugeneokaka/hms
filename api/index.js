@@ -35,9 +35,20 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(cookieParser());
 const loginRouter = require("./routes/login");
+const bookRouter = require("./routes/book");
+const financeRouter = require("./routes/finance");
+app.use("/finance", financeRouter);
+app.use("/book", bookRouter);
 app.use("/login", loginRouter);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
+});
+app.get("/check", (req, res) => {
+  const { token } = req.cookies;
+  jwt.verify(token, JWT_SECRET, {}, (err, info) => {
+    if (err) throw err;
+    res.json(info);
+  });
 });
 // Middleware to verify JWT
 const authenticate = (req, res, next) => {
