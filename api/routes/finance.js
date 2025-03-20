@@ -93,4 +93,40 @@ router.get("/finance", async (req, res) => {
   }
 });
 
+router.get("/most-category", async (req, res) => {
+  try {
+    const categories = await prisma.transaction.groupBy({
+      by: ["category"],
+      _count: { id: true },
+      orderBy: { _count: { id: "desc" } },
+      take: 3,
+    });
+    console.log(categories);
+
+    res.json({
+      category: categories || "No transactions",
+      transactionCount: categories[0]?._count.id || 0,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error fetching data" });
+  }
+});
+
+router.get("/most-expensive", async (req, res) => {
+  try {
+    const transaction = await prisma.transaction.findFirst({
+      orderBy: { amount: "desc" },
+    });
+
+    if (!transaction) {
+      return res.json({ message: "No transactions found" });
+    }
+
+    res.json(transaction);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching data" });
+  }
+});
+
 module.exports = router;

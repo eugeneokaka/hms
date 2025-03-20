@@ -14,6 +14,7 @@ import Link from "next/link";
 interface User {
   firstname: string;
   email: string;
+  role: string; // Added role field
 }
 
 export default function Navbar() {
@@ -24,7 +25,7 @@ export default function Navbar() {
     const checkAuthStatus = async () => {
       try {
         const res = await fetch("http://localhost:4000/auth/status", {
-          credentials: "include", // Allows cookies to be sent
+          credentials: "include",
         });
 
         if (!res.ok) throw new Error("Not authenticated");
@@ -56,6 +57,19 @@ export default function Navbar() {
       <Link href="/" className="text-xl font-bold text-black dark:text-white">
         Hospital
       </Link>
+      {/* <div>
+        
+        {user?.role === "admin" && (
+          <Link href="/dashboard" className="text-lg font-bold">
+            Dashboard
+          </Link>
+        )}
+      </div> */}
+      <div>
+        <Link href="/dashboard" className="text-lg font-bold">
+          Dashboard
+        </Link>
+      </div>
       <div>
         {user ? (
           <DropdownMenu>
@@ -67,8 +81,7 @@ export default function Navbar() {
               className="bg-white dark:bg-gray-800 text-black dark:text-white"
             >
               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-              <Link href={"/login"}>
-                {" "}
+              <Link href="/login">
                 <DropdownMenuItem>Login</DropdownMenuItem>
               </Link>
             </DropdownMenuContent>
@@ -84,7 +97,6 @@ export default function Navbar() {
     </nav>
   );
 }
-
 // "use client";
 
 // import { useState, useEffect } from "react";
