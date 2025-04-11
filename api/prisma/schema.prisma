@@ -69,3 +69,45 @@ enum TransactionType {
   INCOME
   EXPENSE
 }
+model Order {
+  id           String     @id @default(uuid())
+  orderNumber  String     @unique
+  supplier     String
+  orderDate    DateTime   @default(now())
+  recipient    String
+  price        Float
+  createdAt    DateTime   @default(now())
+
+  medicines    Medicine[]
+}
+
+model Medicine {
+  id            String     @id @default(uuid())
+  name          String
+  category      String
+  manufacturer  String
+  description   String
+  quantity      Int
+  price         Float
+  expiryDate    DateTime
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  orderId       String?
+  order         Order?     @relation(fields: [orderId], references: [id])
+  prescriptions Prescription[]
+}
+
+model Prescription {
+  id          String   @id @default(uuid())
+  patientId   String
+  doctorId    String
+  medicineId  String
+  dosage      String
+  frequency   String
+  duration    String
+  createdAt   DateTime @default(now())
+
+  medicine    Medicine @relation(fields: [medicineId], references: [id])
+}
+

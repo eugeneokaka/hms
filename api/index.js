@@ -37,9 +37,11 @@ app.use(cookieParser());
 const loginRouter = require("./routes/login");
 const bookRouter = require("./routes/book");
 const financeRouter = require("./routes/finance");
+const medicineRouter = require("./routes/medicine");
 app.use("/finance", financeRouter);
 app.use("/book", bookRouter);
 app.use("/login", loginRouter);
+app.use("/med", medicineRouter);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
@@ -94,19 +96,20 @@ app.get("/auth/status", async (req, res) => {
     const decoded = jwt.verify(token, JWT_SECRET);
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { firstname: true, email: true, id: true },
+      select: { firstname: true, email: true, id: true, role: true }, // Add `role` here
     });
 
     if (!user) {
       return res.status(401).json({ authenticated: false });
     }
-
+    console.log(user);
     res.json({ authenticated: true, user });
   } catch (error) {
     console.error(error);
     res.status(401).json({ authenticated: false });
   }
 });
+
 // logout
 app.post("/logout", (req, res) => {
   res.clearCookie("token", {

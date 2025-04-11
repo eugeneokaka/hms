@@ -7,14 +7,17 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { CircleUserRound } from "lucide-react";
 
 interface User {
   firstname: string;
   email: string;
-  role: string; // Added role field
+  role: string;
 }
 
 export default function Navbar() {
@@ -57,38 +60,47 @@ export default function Navbar() {
       <Link href="/" className="text-xl font-bold text-black dark:text-white">
         Hospital
       </Link>
-      {/* <div>
-        
-        {user?.role === "admin" && (
-          <Link href="/dashboard" className="text-lg font-bold">
-            Dashboard
-          </Link>
+
+      <div className="flex items-center gap-6">
+        {/* Conditionally render Dashboard and Medicine links based on role */}
+        {user && (user.role === "ADMIN" || user.role === "DOCTOR") && (
+          <>
+            <Link
+              href="/dashboard"
+              className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/medicine"
+              className="text-lg font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400"
+            >
+              Medicine
+            </Link>
+          </>
         )}
-      </div> */}
-      <div>
-        <Link href="/dashboard" className="text-lg font-bold">
-          Dashboard
-        </Link>
-      </div>
-      <div>
+
         {user ? (
           <DropdownMenu>
-            <DropdownMenuTrigger className="w-10 h-10 rounded-full bg-blue-500 text-white font-bold">
-              {user.firstname[0].toUpperCase()}
+            <DropdownMenuTrigger asChild>
+              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600 text-white font-bold cursor-pointer hover:opacity-90 transition">
+                {user.firstname[0].toUpperCase()}
+              </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="bg-white dark:bg-gray-800 text-black dark:text-white"
-            >
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuLabel className="flex flex-col">
+                <span className="font-medium">{user.firstname}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {user.email}
+                </span>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-              <Link href="/login">
-                <DropdownMenuItem>Login</DropdownMenuItem>
-              </Link>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <Link href="/login">
-            <Button className="bg-slate-800 dark:bg-blue-500 text-white">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
               Login
             </Button>
           </Link>
@@ -97,63 +109,3 @@ export default function Navbar() {
     </nav>
   );
 }
-// "use client";
-
-// import { useState, useEffect } from "react";
-// import { useRouter } from "next/navigation";
-// import { Button } from "@/components/ui/button";
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
-// import Link from "next/link";
-
-// interface User {
-//   firstname: string;
-//   email: string;
-// }
-
-// export default function Navbar() {
-//   const [user, setUser] = useState<User | null>(null);
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     // Simulating fetching user data from an API or localStorage
-//     const storedUser = localStorage.getItem("user");
-//     if (storedUser) {
-//       setUser(JSON.parse(storedUser));
-//     }
-//   }, []);
-
-//   const handleLogout = () => {
-//     localStorage.removeItem("user"); // Clear user data
-//     setUser(null);
-//     router.push("/login");
-//   };
-
-//   return (
-//     <nav className="flex justify-between items-center px-6 py-4 bg-white shadow-md">
-//       <Link href="/" className="text-xl font-bold">
-//         Hospital
-//       </Link>
-//       <div>
-//         {user ? (
-//           <DropdownMenu>
-//             <DropdownMenuTrigger className="px-3 py-2 rounded-full bg-blue-500 text-white font-bold">
-//               {user.firstname[0].toUpperCase()}
-//             </DropdownMenuTrigger>
-//             <DropdownMenuContent align="end">
-//               <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-//             </DropdownMenuContent>
-//           </DropdownMenu>
-//         ) : (
-//           <Link href="/login">
-//             <Button>Login</Button>
-//           </Link>
-//         )}
-//       </div>
-//     </nav>
-//   );
-// }

@@ -287,7 +287,7 @@ function Page() {
                             </p>
                             {mostExpensive.category && (
                               <Badge variant="secondary" className="text-xs">
-                                {mostExpensive.category}efe
+                                {mostExpensive.category}
                               </Badge>
                             )}
                           </div>
